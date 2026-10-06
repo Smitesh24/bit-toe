@@ -39,7 +39,18 @@ npm start          # serves on http://localhost:5173
 python3 -m http.server 5173
 ```
 
-Open `index.html` through a server rather than `file://`, because ES modules need one. To host it on **GitHub Pages**, go to Settings → Pages → *Deploy from a branch* and pick the branch root.
+Open `index.html` through a server rather than `file://`, because ES modules need one.
+
+## Deploy (Vercel)
+
+`vercel.json` sets the project up as a static site with no build step. `.vercelignore` keeps tests and CI files out of the deployment.
+
+1. At [vercel.com/new](https://vercel.com/new), import the GitHub repo `Smitesh24/bit-toe`.
+2. Leave **Framework Preset** on *Other*, with the build command and output directory empty, then click **Deploy**.
+
+After that, Vercel redeploys on every push: the production branch goes live and other branches get preview URLs.
+
+Or from a terminal: `npx vercel --prod`.
 
 ## Test
 
