@@ -1,0 +1,11 @@
+{
+  "name": "bit-tic-tac-toe",
+  "version": "1.0.0",
+  "description": "Survivor Tic-Tac-Toe: the board persists across rounds — a win keeps one winning piece, a draw eliminates two of each.",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "start": "npx --yes serve -l 5173 .",
+    "test": "node --test"
+  }
+}

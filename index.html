@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Bit Tic-Tac-Toe</title>
+  <meta name="description" content="Survivor Tic-Tac-Toe. The board never resets: a win keeps one winning piece, a draw eliminates two of each." />
+  <meta name="theme-color" content="#09090c" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2309090c'/%3E%3Cpath d='M10 12h12l10 26 10-26h12L36 54h-8z' fill='%23c6ff00'/%3E%3C/svg%3E" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=JetBrains+Mono:wght@400;600;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="backdrop" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <a class="brand" href="./" aria-label="Bit Tic-Tac-Toe home">
+      <svg class="crest" viewBox="0 0 64 64" aria-hidden="true">
+        <path d="M6 10h14l12 30 12-30h14L38 56h-12z" fill="currentColor" />
+        <path d="M27 18h10l-5 12z" fill="var(--bg)" />
+      </svg>
+      <span class="wordmark">BIT<span class="dash">/</span>TIC-TAC-TOE</span>
+    </a>
+    <span class="tag">SURVIVOR PROTOCOL</span>
+    <div class="topbar-actions">
+      <button class="btn ghost small" id="rulesBtn" type="button" aria-haspopup="dialog">Rules</button>
+      <button class="btn ghost small" id="newBtn" type="button">New<span class="wide-only"> match</span></button>
+    </div>
+  </header>
+
+  <main class="arena">
+    <!-- HUD -->
+    <section class="hud" aria-label="Match status">
+      <div class="player-card x" id="cardX">
+        <span class="label">Player</span>
+        <span class="glyph"><svg viewBox="0 0 100 100"><use href="#piece-x" /></svg></span>
+        <span class="name" id="nameX">Hunter X</span>
+        <span class="score" id="scoreX">0</span>
+      </div>
+
+      <div class="round-box">
+        <span class="label" id="roundLabel">Round</span>
+        <span class="round"><span id="roundNum">1</span><span class="of"> / <span id="roundTotal">7</span></span></span>
+        <div class="pips" id="pips" aria-hidden="true"></div>
+        <span class="draws">Draws <b id="drawCount">0</b></span>
+      </div>
+
+      <div class="player-card o" id="cardO">
+        <span class="label">Player</span>
+        <span class="glyph"><svg viewBox="0 0 100 100"><use href="#piece-o" /></svg></span>
+        <span class="name" id="nameO">Hunter O</span>
+        <span class="score" id="scoreO">0</span>
+      </div>
+    </section>
+
+    <!-- Board -->
+    <section class="board-wrap" aria-label="Board">
+      <div class="turn" id="turn" aria-live="polite"></div>
+      <div class="board" id="board" role="grid" aria-label="Tic-tac-toe board"></div>
+      <div class="banner" id="banner" role="status" aria-live="polite"></div>
+      <p class="hint">Click a cell or press <kbd>1</kbd>–<kbd>9</kbd>. Pieces don’t reset between rounds.</p>
+    </section>
+
+    <!-- Log -->
+    <aside class="side">
+      <div class="panel">
+        <h2 class="panel-title">Round log</h2>
+        <ol class="log" id="log"><li class="empty">No rounds played yet.</li></ol>
+      </div>
+      <div class="panel legend">
+        <h2 class="panel-title">Protocol</h2>
+        <ul>
+          <li><b class="hl-x">Win</b> 1 random winning piece survives. The rest are removed. The loser moves next.</li>
+          <li><b class="hl-o">Draw</b> 2 random X and 2 random O are eliminated.</li>
+          <li><b>Veterans</b> Pieces tagged <span class="mini-tag">R2</span> survived from an earlier round and can still make a line.</li>
+        </ul>
+      </div>
+    </aside>
+  </main>
+
+  <!-- Setup dialog -->
+  <dialog class="modal" id="setup" aria-labelledby="setupTitle">
+    <form method="dialog" class="modal-body" id="setupForm">
+      <p class="kicker">Configure match</p>
+      <h2 id="setupTitle" class="modal-title">Enter the arena</h2>
+
+      <fieldset>
+        <legend>Rounds</legend>
+        <div class="seg">
+          <label><input type="radio" name="rounds" value="7" checked /><span><b>7</b> Rounds<small>Quick hunt</small></span></label>
+          <label><input type="radio" name="rounds" value="13" /><span><b>13</b> Rounds<small>Long hunt</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Opponent</legend>
+        <div class="seg">
+          <label><input type="radio" name="opponent" value="human" checked /><span><b>2P</b> Local<small>Same device</small></span></label>
+          <label><input type="radio" name="opponent" value="cpu" /><span><b>CPU</b> Bot<small>You play X</small></span></label>
+        </div>
+      </fieldset>
+
+      <fieldset id="levelSet" disabled>
+        <legend>Bot level</legend>
+        <div class="seg three">
+          <label><input type="radio" name="level" value="easy" /><span>Easy</span></label>
+          <label><input type="radio" name="level" value="medium" /><span>Medium</span></label>
+          <label><input type="radio" name="level" value="hard" checked /><span>Hard</span></label>
+        </div>
+      </fieldset>
+
+      <button class="btn primary block" type="submit" value="start">Start match</button>
+    </form>
+  </dialog>
+
+  <!-- Rules dialog -->
+  <dialog class="modal" id="rules" aria-labelledby="rulesTitle">
+    <form method="dialog" class="modal-body">
+      <p class="kicker">How it works</p>
+      <h2 id="rulesTitle" class="modal-title">Survivor rules</h2>
+      <ol class="rules">
+        <li>It’s a standard 3×3 board. <b>X</b> moves first in round 1.</li>
+        <li><b>The board never resets.</b> Pieces stay on it from one round to the next.</li>
+        <li><b>Round win:</b> one random piece from the winning line survives and the others are removed. If one move completes two lines, one piece survives from all of them. The loser moves next.</li>
+        <li><b>Round draw</b> (full board, no line): 2 random <b>X</b> and 2 random <b>O</b> are eliminated. Turns keep alternating.</li>
+        <li>Survivors count toward future lines, so an old piece can help win a later round.</li>
+        <li>Most round wins after <b>7</b> or <b>13</b> rounds takes the match. The match ends early once the lead can’t be caught.</li>
+        <li>Tied after the final round? <b>Overtime</b>: the next round anyone wins decides the match.</li>
+      </ol>
+      <button class="btn primary block" type="submit">Got it</button>
+    </form>
+  </dialog>
+
+  <!-- Game over dialog -->
+  <dialog class="modal" id="over" aria-labelledby="overTitle">
+    <form method="dialog" class="modal-body center">
+      <p class="kicker">Match complete</p>
+      <div class="winner-glyph" id="winnerGlyph"></div>
+      <h2 id="overTitle" class="modal-title">X wins</h2>
+      <p class="final" id="finalScore"></p>
+      <div class="row">
+        <button class="btn primary" type="submit" value="rematch">Rematch</button>
+        <button class="btn ghost" type="submit" value="setup">Change mode</button>
+      </div>
+    </form>
+  </dialog>
+
+  <!-- Piece sprites -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <symbol id="piece-x" viewBox="0 0 100 100">
+        <path d="M14 22 22 14 50 42 78 14 86 22 58 50 86 78 78 86 50 58 22 86 14 78 42 50Z" fill="currentColor" />
+      </symbol>
+      <symbol id="piece-o" viewBox="0 0 100 100">
+        <circle cx="50" cy="50" r="31" fill="none" stroke="currentColor" stroke-width="11" stroke-dasharray="40 8.7" transform="rotate(-62 50 50)" />
+        <circle cx="50" cy="50" r="6" fill="currentColor" />
+      </symbol>
+    </defs>
+  </svg>
+
+  <script type="module" src="js/ui.js"></script>
+</body>
+</html>
